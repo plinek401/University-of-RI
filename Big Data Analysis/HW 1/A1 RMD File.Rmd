@@ -1,0 +1,182 @@
+---
+title: "Homework 1"
+author: "Pawel Linek"
+date: "2/23/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data
+
+The data we were provided was data on student-teacher ratios from various countries over time in various school levels. To see the data check out this link: <https://tinyurl.com/student-teacher>. 
+
+We were also asked to compare some of the data to data in **gapminder**, a built in library in R which looks at various country data such as gdp and population.
+
+## Layout of Analysis
+
+My analysis of the data consists of:
+
+* *Compare Geographic location and student-teacher ratio*
+* *Compare population of continents to student-teacher ratio*
+* *Compare GDP per Capita to student-teacher ratio*
+
+I will be attempting to find reasons as to why some countries have certain student-ratios.
+
+## Analysis
+
+### Geographic Location vs. Student-Teacher Ratios
+
+
+```{r include=FALSE}
+library(tidyverse)
+library(gapminder)
+library(directlabels)
+
+data <- read_csv("https://tinyurl.com/student-teacher")
+
+#Cuts down gapminder to only include rows where the year is the maximum value (2007) to look at more recent data.
+gapminder_modernish <- gapminder[gapminder$year>2006,]  
+
+  
+#Merge dataframes into 1 dataframe
+temp <- merge(data, gapminder_modernish, by="country")
+
+#Perform a few column drops.
+data_dropped <-select(temp, -c("flag_codes", "flags", "edulit_ind", "year.y"))
+
+#We get our dataframe We're going to work with, With all relevant data.
+  
+#Using Summarize to show change in mean student ratio over time by continent to compare geographic locations impact on student ratio. (Use in RMarkdown)
+
+```
+
+My first instinct was to target geographic location and find the mean student ratio per continent over time. I wanted to see whether there was an increasing, decreasing or neutral trend of the student ratio over time per continent. Below is my plot to depict this:
+
+```{r, echo=FALSE}
+mean_ratios <- data_dropped %>%
+  filter(!is.na(student_ratio)) %>%
+  group_by(year.x, continent) %>%
+  summarize(mean_student_ratio = mean(student_ratio)) 
+
+ggplot(mean_ratios, aes(year.x, mean_student_ratio, color=continent)) +
+ geom_point() +geom_line() + xlab("Year") + ylab("Mean student ratio") + ggtitle("Mean student ratio over time per continent")
+```
+
+A couple points we can deduce from the graph include:
+
+* *As can be seen above, Africa as a continent seems to have the largest student-teacher ratio with a negative trend. Meaning that over time, more teachers are being hired, less students are attending school (or a combination of both). We can imagine this is due to the large population size and lower educational standards. *
+
+* *Population as a factor seems to be supported with Asia being the continent with the second largest student-teacher ratio, except in their case, the ratio seems to be increasing.*
+
+* *Europe by far has the smalled student-teacher ratio of any continent, having approximately a __3x smaller__ ratio than Africa and around 2.5 smaller than the next smallest continent.*
+
+
+### Population vs. Student-Teacher Ratios
+
+The previous plot made me believe that population may have a role in the student-teacher ratio of a country, and so I decided to drill-down on this hypothesis.
+
+I decided to take the countries with the smallest and the largest population of each continent and compare their range of ratios overtime. This helped me to see whether there were outliers in each continent, as well as seeing how much data there seems to be per continent.
+
+Below is my plot to depict the range:
+
+```{r include=FALSE}
+range_pop_ratio <- data_dropped %>%
+  filter(!is.na(student_ratio)) %>%
+  filter(year.x==2012)%>% 
+  group_by(country, continent, pop, student_ratio) %>% 
+  summarize(mean(student_ratio)) %>%
+  group_by(continent) %>%
+  filter(pop == max(pop) | pop == min(pop))
+
+labels <- range_pop_ratio %>%
+  arrange(continent) %>% pull(country)
+
+```
+
+```{r, echo=FALSE}
+ggplot(range_pop_ratio, aes(continent, student_ratio, group(continent), color=country, lwd = 2)) +
+   geom_line() + theme_bw() + scale_color_discrete(breaks = labels, labels = labels) + xlab("Continent") + ylab("Student Ratio") + ggtitle("Range of student ratio by continent mins and maxs")
+
+```
+
+Looking at this plot shows us the range of the student-teacher ratios focusing specifically on the most populous and least populous country in each continent. Looking at Africa we see that Sao Tome and Principe's student-teacher ratio is around 24 while being the least populous country in Africa. Compare that to the least populous country in Europe (Iceland), with student-teacher ratio equal to around 5, we notice that population may not play the most significant role in student teacher ratio.
+
+Similarly if we compare the most populous country from each continent we see that Ethiopia in Africa has a 41 student-teacher ratio, while China in Asia has approximately a 24 student-teacher ratio. 
+
+**China's ratio is even less than Sao Tome and Principe's while having a population significantly larger.**
+
+**Population doesn't seem to be a significant independant variable for explaining the student-teacher ratio of a country.**
+
+Digging a little deeper into this, seeing how these extreme population cases per continent are changing might give us insight as to how the entire continent is trending, whether the outliers follow that trend or whether they are minimizing it. Below is a plot representing this view:
+
+
+```{r, echo=FALSE}
+data_dropped %>%
+  filter(!is.na(student_ratio)) %>%
+  filter(country == "Ethiopia" | country == "Sao Tome and Principe" | country == "Brazil" | country == "Jamaica" | country == "Bahrain" | country == "China" | country == "Germany"| country == "Iceland" | country == "New Zealand") %>% 
+  group_by(country, year.x, continent) %>%
+  summarize(mean_student_ratio = mean(student_ratio))  %>% 
+  ggplot(aes(year.x, mean_student_ratio, group = country, color=continent)) +
+  geom_point() +geom_line() + xlab("Year") + ylab("Mean student ratio") + ggtitle("Mean student ratio over time per min/max country") + 
+  geom_dl(aes(label = country), method = list(dl.combine("last.points"), cex = 0.8))  + scale_x_continuous(expand=c(0, 1))
+
+
+```
+
+Viewing this graph I noticed that there was some missing data for the European countries. There didn't seem to be any datapoints for the years 2016-2017 in general for this. Whether that is the case for the rest of Europe I'm not sure but it may be a possiblity as to why European countries have such low student-teacher ratios. Here we also notice that Oceania only has one country as it's representative (New Zealand), meaning it is both the min and the max for OCeania.
+
+Looking at some of the trends of these countries, it looks like most tend to follow their continents respective trendlines except for the African Countries and Jamaica. While most other countries seemed to have stagnated around the 2014 mark, we see Ethiopia's student-teacher ratio grew substantially from 2014-2016 giving the inclination that either a bunch of teachers left the profession, or less students entered the education system.
+
+A quick google search led me to this article <https://www.refworld.org/docid/55505d0115.html>, which was a paper written in 2014 titled *Education under Attack 2014 - Ethiopia*. I didn't get too deep into the article but it may provide some insight into those years in Ethiopia.
+
+Sao Tome and Principe followed a similar trend to Ethioipia, while Jamaica recently in 2016-2017 seemed to have increased it's ratio.
+
+
+### GDP Per Capita vs. Student-Teacher Ratios
+
+A hypothesis I had from the start was that GDP Per Capita, *the more affluent a country is, the smaller their student-teacher ratio would be*. 
+
+I decided to investigate this hypothesis and plot every country's GDP Per Capita vs. Mean student-teacher ratio of that country splitting the data up per continent. Below are my output graphs:
+
+```{r include=FALSE}
+gdpToRatio <- data_dropped %>%
+  filter(!is.na(student_ratio)) %>%
+  group_by(country, continent, gdpPercap) %>%
+  summarize(avg_ratio = mean(student_ratio, na.rm = T))
+
+```
+
+```{r, echo=FALSE}
+ggplot(gdpToRatio, aes(gdpPercap, avg_ratio, 
+                                  group=continent)) +
+  geom_point() + facet_wrap(~continent) +
+  labs(y = "Mean Student Ratio",
+       x = "GDP Per Capita") + scale_x_continuous(expand=c(.1, 1)) + geom_smooth(method = "lm", se = FALSE) 
+```
+
+
+This facet-wrapped plot revealed that there seems to be a large correlation between gdp per capita and student ratio across every continent (except Oceania as only 1 country exists in our dataset from that region).
+
+#### Takeaways
+* The more affluent the country is the lower their student-teacher seems to be, supported by a linear regression line.
+* GDP per Capita isn't a 100% correlated variable as many countries have the same GDP per capita how varying student-teacher ratio. This difference can be a result of other compounding variables such as population, type of schooling that it is, etc.
+* European countries seemed to have the lowest student-teacher ratios while being a region much more affluent than other continents. This may result in better pay and benefits for teachers, making teachers much more readily available, as opposed to Afriacn countries which may have other factors dissuading people pursuing the career.
+
+### Conclusion
+
+OVerall it seems that the main factors from the data affecting student-teacher ratios (in order) are:
+* GDP Per Capita
+* Region
+* Population
+
+These are undoubtedly not the only variables affecting student-teacher ratios. Factors such as culture, benefits, regulation and other things not represented in the data surely played a huge impact on student-teacher ratios. From what we can tell with this data, more affluent countries, in Europe, Asia and the America's seem to have lower student-teacher ratios as opposed to poorer countries.
+
+
+
+
+

@@ -1,0 +1,254 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Homework 1},
+  pdfauthor={Pawel Linek},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Homework 1}
+\author{Pawel Linek}
+\date{2/23/2020}
+
+\begin{document}
+\maketitle
+
+\hypertarget{data}{%
+\subsection{Data}\label{data}}
+
+The data we were provided was data on student-teacher ratios from
+various countries over time in various school levels. To see the data
+check out this link: \url{https://tinyurl.com/student-teacher}.
+
+We were also asked to compare some of the data to data in
+\textbf{gapminder}, a built in library in R which looks at various
+country data such as gdp and population.
+
+\hypertarget{layout-of-analysis}{%
+\subsection{Layout of Analysis}\label{layout-of-analysis}}
+
+My analysis of the data consists of:
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{Compare Geographic location and student-teacher ratio}
+\item
+  \emph{Compare population of continents to student-teacher ratio}
+\item
+  \emph{Compare GDP per Capita to student-teacher ratio}
+\end{itemize}
+
+I will be attempting to find reasons as to why some countries have
+certain student-ratios.
+
+\hypertarget{analysis}{%
+\subsection{Analysis}\label{analysis}}
+
+\hypertarget{geographic-location-vs.-student-teacher-ratios}{%
+\subsubsection{Geographic Location vs.~Student-Teacher
+Ratios}\label{geographic-location-vs.-student-teacher-ratios}}
+
+My first instinct was to target geographic location and find the mean
+student ratio per continent over time. I wanted to see whether there was
+an increasing, decreasing or neutral trend of the student ratio over
+time per continent. Below is my plot to depict this:
+
+\includegraphics{Homework-1_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+A couple points we can deduce from the graph include:
+
+\begin{itemize}
+\item
+  \emph{As can be seen above, Africa as a continent seems to have the
+  largest student-teacher ratio with a negative trend. Meaning that over
+  time, more teachers are being hired, less students are attending
+  school (or a combination of both). We can imagine this is due to the
+  large population size and lower educational standards. }
+\item
+  \emph{Population as a factor seems to be supported with Asia being the
+  continent with the second largest student-teacher ratio, except in
+  their case, the ratio seems to be increasing.}
+\item
+  \emph{Europe by far has the smalled student-teacher ratio of any
+  continent, having approximately a \textbf{3x smaller} ratio than
+  Africa and around 2.5 smaller than the next smallest continent.}
+\end{itemize}
+
+\hypertarget{population-vs.-student-teacher-ratios}{%
+\subsubsection{Population vs.~Student-Teacher
+Ratios}\label{population-vs.-student-teacher-ratios}}
+
+The previous plot made me believe that population may have a role in the
+student-teacher ratio of a country, and so I decided to drill-down on
+this hypothesis.
+
+I decided to take the countries with the smallest and the largest
+population of each continent and compare their range of ratios overtime.
+This helped me to see whether there were outliers in each continent, as
+well as seeing how much data there seems to be per continent.
+
+Below is my plot to depict the range:
+
+\includegraphics{Homework-1_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+Looking at this plot shows us the range of the student-teacher ratios
+focusing specifically on the most populous and least populous country in
+each continent. Looking at Africa we see that Sao Tome and Principe's
+student-teacher ratio is around 24 while being the least populous
+country in Africa. Compare that to the least populous country in Europe
+(Iceland), with student-teacher ratio equal to around 5, we notice that
+population may not play the most significant role in student teacher
+ratio.
+
+Similarly if we compare the most populous country from each continent we
+see that Ethiopia in Africa has a 41 student-teacher ratio, while China
+in Asia has approximately a 24 student-teacher ratio.
+
+\textbf{China's ratio is even less than Sao Tome and Principe's while
+having a population significantly larger.}
+
+\textbf{Population doesn't seem to be a significant independant variable
+for explaining the student-teacher ratio of a country.}
+
+Digging a little deeper into this, seeing how these extreme population
+cases per continent are changing might give us insight as to how the
+entire continent is trending, whether the outliers follow that trend or
+whether they are minimizing it. Below is a plot representing this view:
+
+\includegraphics{Homework-1_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+Viewing this graph I noticed that there was some missing data for the
+European countries. There didn't seem to be any datapoints for the years
+2016-2017 in general for this. Whether that is the case for the rest of
+Europe I'm not sure but it may be a possiblity as to why European
+countries have such low student-teacher ratios. Here we also notice that
+Oceania only has one country as it's representative (New Zealand),
+meaning it is both the min and the max for OCeania.
+
+Looking at some of the trends of these countries, it looks like most
+tend to follow their continents respective trendlines except for the
+African Countries and Jamaica. While most other countries seemed to have
+stagnated around the 2014 mark, we see Ethiopia's student-teacher ratio
+grew substantially from 2014-2016 giving the inclination that either a
+bunch of teachers left the profession, or less students entered the
+education system.
+
+A quick google search led me to this article
+\url{https://www.refworld.org/docid/55505d0115.html}, which was a paper
+written in 2014 titled \emph{Education under Attack 2014 - Ethiopia}. I
+didn't get too deep into the article but it may provide some insight
+into those years in Ethiopia.
+
+Sao Tome and Principe followed a similar trend to Ethioipia, while
+Jamaica recently in 2016-2017 seemed to have increased it's ratio.
+
+\hypertarget{gdp-per-capita-vs.-student-teacher-ratios}{%
+\subsubsection{GDP Per Capita vs.~Student-Teacher
+Ratios}\label{gdp-per-capita-vs.-student-teacher-ratios}}
+
+A hypothesis I had from the start was that GDP Per Capita, \emph{the
+more affluent a country is, the smaller their student-teacher ratio
+would be}.
+
+I decided to investigate this hypothesis and plot every country's GDP
+Per Capita vs.~Mean student-teacher ratio of that country splitting the
+data up per continent. Below are my output graphs:
+
+\includegraphics{Homework-1_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+This facet-wrapped plot revealed that there seems to be a large
+correlation between gdp per capita and student ratio across every
+continent (except Oceania as only 1 country exists in our dataset from
+that region).
+
+\hypertarget{takeaways}{%
+\paragraph{Takeaways}\label{takeaways}}
+
+\begin{itemize}
+\tightlist
+\item
+  The more affluent the country is the lower their student-teacher seems
+  to be, supported by a linear regression line.
+\item
+  GDP per Capita isn't a 100\% correlated variable as many countries
+  have the same GDP per capita how varying student-teacher ratio. This
+  difference can be a result of other compounding variables such as
+  population, type of schooling that it is, etc.
+\item
+  European countries seemed to have the lowest student-teacher ratios
+  while being a region much more affluent than other continents. This
+  may result in better pay and benefits for teachers, making teachers
+  much more readily available, as opposed to Afriacn countries which may
+  have other factors dissuading people pursuing the career.
+\end{itemize}
+
+\hypertarget{conclusion}{%
+\subsubsection{Conclusion}\label{conclusion}}
+
+OVerall it seems that the main factors from the data affecting
+student-teacher ratios (in order) are: * GDP Per Capita * Region *
+Population
+
+These are undoubtedly not the only variables affecting student-teacher
+ratios. Factors such as culture, benefits, regulation and other things
+not represented in the data surely played a huge impact on
+student-teacher ratios. From what we can tell with this data, more
+affluent countries, in Europe, Asia and the America's seem to have lower
+student-teacher ratios as opposed to poorer countries.
+
+\end{document}
