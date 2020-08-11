@@ -1,0 +1,59 @@
+import pandas as pd
+import numpy as np
+import math
+
+def ent(column):
+    column = list(column)
+    entropy = 0
+    total = len(column)
+    elements, counts = np.unique(column, return_counts=True)
+    numElems = len(elements)
+            
+    for elem in range(len(counts)):
+        pi = counts[elem]/total
+        if(numElems < 2):
+            entropy = entropy - pi*(math.log(pi,2))
+        else:
+            entropy = entropy - pi*(math.log(pi, numElems))
+
+    return entropy
+
+#("String", dataframe with last column being the output column, int)
+def infoGain(colName, data, splitOn):
+    marker = 0
+    baseEntropy = ent(data[colName])
+    
+    elements, counts = np.unique(data[colName], return_counts=True)
+    lowCount = 0
+    highCount = 0
+    
+    for i in range(len(elements)):
+        if(elements[i] < splitOn):
+            lowCount = lowCount + counts[i]
+        else:
+            highCount = highCount + counts[i]
+    
+    df1, df2 = [x for _, x in df.groupby(data[colName] < splitOn)]
+    #Returns Entropy of data - Scaled Entropy of #<splitOn - Scaled Entropy #>=splitOn  
+    return (baseEntropy - ((lowCount/(highCount+lowCount))*(ent(df1.iloc[:,-1]))) - ((highCount/(highCount+lowCount))*(ent(data.iloc[:,-1])))), df1, df2 
+        
+def BestSplit(data):
+    mostInfoGain = 0
+    labels = list(data.columns.values)
+    for i in range(data.shape[1]-1):
+        elements, counts = np.unique(data[labels[i]], return_counts=True)
+        print("Label:", labels[i])
+        for j in range(1,len(elements)):
+            gain, leftPart, rightPart = infoGain(labels[i], data, elements[j])
+            if(gain > mostInfoGain):
+                mostInfoGain = gain
+                colToSplitOn = labels[i]
+                digitToSplitOn = elements[j]
+                leftPartition = leftPart
+                rightPartition = rightPart
+                #print("\n",leftPartition)
+                #print(rightPartition,"\n")
+    #print("\n\n\nOUTPUT:\nThe column {} has {} information gain if split on {}.".format(colToSplitOn, mostInfoGain, digitToSplitOn))
+    #print(leftPartition)
+    #print(rightPartition)
+    
